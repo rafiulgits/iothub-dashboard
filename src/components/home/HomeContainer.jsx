@@ -5,8 +5,8 @@ import UserApi from "../../apis/UserApi";
 import HomeView from "./HomeView";
 
 const HubEndpoint = "https://localhost:4001/agenthub";
-const MqttClientConnected = "$SYS/user/connected";
-const MqttClientDisconnected = "$SYS/user/disconnected";
+const MqttClientConnected = "$SYS/users/connected";
+const MqttClientDisconnected = "$SYS/users/disconnected";
 
 export default class HomeContainer extends React.Component {
   state = {
@@ -88,12 +88,21 @@ export default class HomeContainer extends React.Component {
       });
   };
 
+  onClientClose = (clientId) => {
+    this.state.hubConnection
+      .invoke("MqttClientDisconnectCommand", clientId)
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   render() {
     return (
       <Layout>
         <HomeView
           users={this.state.connectedUsers}
           messages={this.state.messages}
+          clientCloseCallback={this.onClientClose}
         />
       </Layout>
     );

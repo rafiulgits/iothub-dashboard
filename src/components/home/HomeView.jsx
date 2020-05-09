@@ -1,18 +1,41 @@
 import React from "react";
-import { Container, Row, Col, ListGroup } from "react-bootstrap";
+import { Container, Row, Col, ListGroup, Button } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 
-const UserList = ({ users }) => {
+const UserItem = ({ user, clientCloseCallback }) => {
+  const onClientClose = () => {
+    clientCloseCallback(user.id);
+  };
+  return (
+    <div>
+      <b>{user.name}</b>
+      <div className="d-inline-block float-right">
+        <Button className="mr-1" size="sm" variant="primary">
+          View
+        </Button>
+        <Button size="sm" variant="danger" onClick={onClientClose}>
+          <FontAwesomeIcon size="lg" icon={faTimesCircle} />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+const UserList = ({ users, clientCloseCallback }) => {
   let list = [];
   users.forEach((item, index) => {
     list.push(
-      <ListGroup.Item as="li" key={index}>
-        {`${item.name}`}
+      <ListGroup.Item align="left" as="li" key={index}>
+        <UserItem user={item} clientCloseCallback={clientCloseCallback} />
       </ListGroup.Item>
     );
   });
   return (
     <ListGroup as="ul">
-      <ListGroup.Item active>Active Users</ListGroup.Item>
+      <ListGroup.Item className="bg-success text-white">
+        Active Clients
+      </ListGroup.Item>
       {list}
     </ListGroup>
   );
@@ -37,10 +60,13 @@ const PublishBox = ({ messages }) => {
 
 const HomeView = (props) => {
   return (
-    <Container>
+    <Container className="p-1 m-2">
       <Row>
         <Col sm={4}>
-          <UserList users={props.users} />
+          <UserList
+            users={props.users}
+            clientCloseCallback={props.clientCloseCallback}
+          />
         </Col>
         <Col sm={8}>
           <PublishBox messages={props.messages} />
