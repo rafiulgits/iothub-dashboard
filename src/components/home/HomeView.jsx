@@ -2,6 +2,9 @@ import React from "react";
 import { Container, Row, Col, ListGroup, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import Climate from "./Climate";
+import { HomeLight } from "./Accessories";
+import TemperatureChart from "./TemperatureChart";
 
 const UserItem = ({ user, clientCloseCallback }) => {
   const onClientClose = () => {
@@ -32,7 +35,7 @@ const UserList = ({ users, clientCloseCallback }) => {
     );
   });
   return (
-    <ListGroup as="ul">
+    <ListGroup as="ul" className="shadow">
       <ListGroup.Item className="bg-success text-white">
         Active Clients
       </ListGroup.Item>
@@ -51,8 +54,8 @@ const PublishBox = ({ messages }) => {
     );
   });
   return (
-    <ListGroup as="ul">
-      <ListGroup.Item active>MQTT Broker</ListGroup.Item>
+    <ListGroup as="ul" className="shadow">
+      <ListGroup.Item active>MQTT Broker Logs</ListGroup.Item>
       {list}
     </ListGroup>
   );
@@ -60,16 +63,34 @@ const PublishBox = ({ messages }) => {
 
 const HomeView = (props) => {
   return (
-    <Container className="p-1 m-2">
-      <Row>
-        <Col sm={4}>
+    <Container fluid className="p-1">
+      <Row className="d-flex justify-content-center m-0 p-0">
+        <Col md={3}>
           <UserList
             users={props.users}
             clientCloseCallback={props.clientCloseCallback}
           />
         </Col>
-        <Col sm={8}>
+        <Col md={3}>
           <PublishBox messages={props.messages} />
+        </Col>
+        <Col md={6}>
+          <Container fluid>
+            <Row className="d-flex justify-content-center">
+              <Col md={6}>
+                <Climate
+                  temperature={props.temperature}
+                  humidity={props.humidity}
+                />
+              </Col>
+              <Col md={6}>
+                <HomeLight />
+              </Col>
+              <Col md={12}>
+                <TemperatureChart />
+              </Col>
+            </Row>
+          </Container>
         </Col>
       </Row>
     </Container>

@@ -6,7 +6,7 @@ const Layout = (props) => {
   return (
     <div>
       <NavbarView />
-      <div>{props.children}</div>
+      <div className="p-0">{props.children}</div>
     </div>
   );
 };

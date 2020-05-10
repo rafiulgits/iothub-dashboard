@@ -7,6 +7,7 @@ import HomeView from "./HomeView";
 const HubEndpoint = "https://localhost:4001/agenthub";
 const MqttClientConnected = "$SYS/users/connected";
 const MqttClientDisconnected = "$SYS/users/disconnected";
+const HomeTempHumidity = "home/temp-humidity";
 
 export default class HomeContainer extends React.Component {
   state = {
@@ -15,6 +16,8 @@ export default class HomeContainer extends React.Component {
     hubConnection: null,
     connectedUsers: [],
     messages: [],
+    temperature: 0,
+    humidity: 0,
   };
 
   componentDidMount() {
@@ -50,6 +53,8 @@ export default class HomeContainer extends React.Component {
       this.manageMqttClientConnected(payload);
     } else if (topic === MqttClientDisconnected) {
       this.manageMqttClientDisconnected(payload);
+    } else if (topic === HomeTempHumidity) {
+      this.manageTemperature(payload);
     } else {
       let messages = this.state.messages;
       messages.push({ topic: topic, payload: payload });
@@ -67,6 +72,14 @@ export default class HomeContainer extends React.Component {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  manageTemperature = (payload) => {
+    var data = JSON.parse(payload);
+    this.setState({
+      temperature: data["temperature"],
+      humidity: data["humidity"],
+    });
   };
 
   manageMqttClientDisconnected = (clientId) => {
@@ -103,6 +116,8 @@ export default class HomeContainer extends React.Component {
           users={this.state.connectedUsers}
           messages={this.state.messages}
           clientCloseCallback={this.onClientClose}
+          temperature={this.state.temperature}
+          humidity={this.state.humidity}
         />
       </Layout>
     );
