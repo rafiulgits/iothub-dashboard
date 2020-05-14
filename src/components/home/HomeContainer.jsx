@@ -3,10 +3,10 @@ import Layout from "../../shared-components/layout";
 import * as SignalR from "@aspnet/signalr";
 import UserApi from "../../apis/UserApi";
 import HomeView from "./HomeView";
+import { Config, HubRpc } from "../../shared-components/const";
 
-const HubEndpoint = "https://localhost:4001/agenthub";
-const MqttClientConnected = "$SYS/users/connected";
-const MqttClientDisconnected = "$SYS/users/disconnected";
+const MqttClientConnected = "$SYS/broker/clients/connected/new";
+const MqttClientDisconnected = "$SYS/broker/clients/disconnected/new";
 const HomeTempHumidity = "home/temp-humidity";
 
 export default class HomeContainer extends React.Component {
@@ -22,7 +22,7 @@ export default class HomeContainer extends React.Component {
 
   componentDidMount() {
     let hubConnection = new SignalR.HubConnectionBuilder()
-      .withUrl(HubEndpoint)
+      .withUrl(Config.HubEndpoint)
       .build();
 
     this.setState({ hubConnection: hubConnection });
@@ -40,8 +40,11 @@ export default class HomeContainer extends React.Component {
         console.error(err);
       });
 
-    hubConnection.on("AgentConnectionStatus", this.manageAgentConnection);
-    hubConnection.on("Broadcast", this.manageBroadcast);
+    hubConnection.on(
+      HubRpc.AgentMqttConnectionStatus,
+      this.manageAgentConnection
+    );
+    hubConnection.on(HubRpc.MqttBroadcast, this.manageBroadcast);
   };
 
   manageAgentConnection = (status) => {
@@ -49,6 +52,7 @@ export default class HomeContainer extends React.Component {
   };
 
   manageBroadcast = (topic, payload) => {
+    console.log(topic);
     if (topic === MqttClientConnected) {
       this.manageMqttClientConnected(payload);
     } else if (topic === MqttClientDisconnected) {
@@ -103,7 +107,11 @@ export default class HomeContainer extends React.Component {
 
   onClientClose = (clientId) => {
     this.state.hubConnection
-      .invoke("MqttClientDisconnectCommand", clientId)
+      .invoke(
+        HubRpc.InvokeMqttBroker,
+        "$SYS/request/broker/clients/disconnect/command",
+        clientId
+      )
       .catch((err) => {
         console.log(err);
       });
