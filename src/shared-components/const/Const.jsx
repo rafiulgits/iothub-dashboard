@@ -1,5 +1,5 @@
 export const Config = Object.freeze({
-  HubEndpoint: "https://localhost:4001/agenthub",
+  HubEndpoint: `https://localhost:4001/agenthub`,
 });
 
 export const HubRpc = Object.freeze({

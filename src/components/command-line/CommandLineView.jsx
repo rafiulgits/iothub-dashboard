@@ -28,7 +28,7 @@ const IncommingMessageBox = ({ messages }) => {
   });
   return (
     <div className="shadow">
-      <ListGroup>
+      <ListGroup style={{}}>
         <ListGroup.Item active>Incomming Messages</ListGroup.Item>
       </ListGroup>
 

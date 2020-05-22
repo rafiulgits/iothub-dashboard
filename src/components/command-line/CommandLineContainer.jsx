@@ -1,8 +1,8 @@
 import React from "react";
 import Layout from "../../shared-components/layout";
-import * as SignalR from "@aspnet/signalr";
+import AgentHub from "../../services/AgentHub";
 import CommandLineView from "./CommandLineView";
-import { Config, HubRpc } from "../../shared-components/const";
+import { HubRpc } from "../../shared-components/const";
 
 export default class CommandLineContainer extends React.Component {
   state = {
@@ -13,10 +13,7 @@ export default class CommandLineContainer extends React.Component {
   };
 
   componentDidMount() {
-    let hubConnection = new SignalR.HubConnectionBuilder()
-      .withUrl(Config.HubEndpoint)
-      .build();
-
+    let hubConnection = AgentHub.getConnection();
     this.setState({ hubConnection: hubConnection });
     this.hubConnectionManager(hubConnection);
   }

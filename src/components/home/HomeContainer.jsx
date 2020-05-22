@@ -1,9 +1,9 @@
 import React from "react";
 import Layout from "../../shared-components/layout";
-import * as SignalR from "@aspnet/signalr";
 import UserApi from "../../apis/UserApi";
 import HomeView from "./HomeView";
-import { Config, HubRpc } from "../../shared-components/const";
+import { HubRpc } from "../../shared-components/const";
+import AgentHub from "../../services/AgentHub";
 
 const MqttClientConnected = "$SYS/broker/clients/connected/new";
 const MqttClientDisconnected = "$SYS/broker/clients/disconnected/new";
@@ -21,9 +21,7 @@ export default class HomeContainer extends React.Component {
   };
 
   componentDidMount() {
-    let hubConnection = new SignalR.HubConnectionBuilder()
-      .withUrl(Config.HubEndpoint)
-      .build();
+    let hubConnection = AgentHub.getConnection();
 
     this.setState({ hubConnection: hubConnection });
     this.hubConnectionManager(hubConnection);

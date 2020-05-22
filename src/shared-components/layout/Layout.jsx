@@ -4,10 +4,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const Layout = (props) => {
   return (
-    <div>
+    <>
       <NavbarView />
       <div className="p-0">{props.children}</div>
-    </div>
+    </>
   );
 };
 
