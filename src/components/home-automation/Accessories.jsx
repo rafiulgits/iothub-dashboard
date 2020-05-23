@@ -14,7 +14,7 @@ const HomeLight = (props) => {
   };
   const bulbColor = lightStatus === "ON" ? "green" : "dark";
   return (
-    <Container fluid className="shadow p-2 m-1">
+    <Container fluid className="shadow p-2 m-1 bg-danger">
       <Row>
         <Col sm={6}>
           <div

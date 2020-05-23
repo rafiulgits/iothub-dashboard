@@ -1,6 +1,6 @@
 import { AuthenticateAxios } from "./settings/Axios";
 
-const BaseEndpoint = "https://localhost:5001/api/users";
+const BaseEndpoint = `${process.env.REACT_APP_API_ENDPOINT}/api/users`;
 
 export default {
   getConnectedUsers: () => {

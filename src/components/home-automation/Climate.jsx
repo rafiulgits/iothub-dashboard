@@ -15,7 +15,7 @@ const Item = ({ label, value }) => {
 
 const Climate = ({ temperature, humidity }) => {
   return (
-    <Container fluid className="shadow p-2 m-1">
+    <Container fluid className="shadow p-2 m-1 bg-warning text-white">
       <Row>
         <Col sm={5} className="d-flex justify-content-center">
           <Thermometer

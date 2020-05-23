@@ -1,6 +1,5 @@
 import * as SignalR from "@aspnet/signalr";
 import UserManager from "../services/UserManager";
-import { Config } from "../shared-components/const/Const";
 
 export default class AgentHub {
   connection;
@@ -8,7 +7,7 @@ export default class AgentHub {
   static getConnection = () => {
     if (this.connection == null) {
       let endpoint = `${
-        Config.HubEndpoint
+        process.env.REACT_APP_SIGNALR_HUB_ENDPOINT
       }?access_token=${UserManager.getToken()}`;
       this.connection = new SignalR.HubConnectionBuilder()
         .withUrl(endpoint)

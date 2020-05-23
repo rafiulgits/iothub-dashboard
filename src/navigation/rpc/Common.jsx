@@ -1,7 +1,3 @@
-export const Config = Object.freeze({
-  HubEndpoint: `https://localhost:4001/agenthub`,
-});
-
 export const HubRpc = Object.freeze({
   MqttBroadcast: "Broadcast",
   AgentMqttConnectionStatus: "AgentConnectionStatus",
@@ -9,4 +5,7 @@ export const HubRpc = Object.freeze({
   InvokeMqttBroker: "RequestMqttBroker",
 });
 
-export const SysTopics = Object.freeze({});
+export const SysTopics = Object.freeze({
+  MqttClientConnected: "$SYS/broker/clients/connected/new",
+  MqttClientDisconnected: "$SYS/broker/clients/disconnected/new",
+});

@@ -1,15 +1,14 @@
 import React from "react";
-import Layout from "../../shared-components/layout";
 import UserApi from "../../apis/UserApi";
-import HomeView from "./HomeView";
-import { HubRpc } from "../../shared-components/const";
+import HomeAutomationView from "./HomeAutomationView";
+import { HubRpc } from "../../navigation/rpc/Common";
 import AgentHub from "../../services/AgentHub";
 
 const MqttClientConnected = "$SYS/broker/clients/connected/new";
 const MqttClientDisconnected = "$SYS/broker/clients/disconnected/new";
 const HomeTempHumidity = "home/temp-humidity";
 
-export default class HomeContainer extends React.Component {
+export default class HomeAutomationContainer extends React.Component {
   state = {
     isHubConnected: false,
     isMqttConnected: false,
@@ -117,15 +116,15 @@ export default class HomeContainer extends React.Component {
 
   render() {
     return (
-      <Layout>
-        <HomeView
+      <React.Fragment>
+        <HomeAutomationView
           users={this.state.connectedUsers}
           messages={this.state.messages}
           clientCloseCallback={this.onClientClose}
           temperature={this.state.temperature}
           humidity={this.state.humidity}
         />
-      </Layout>
+      </React.Fragment>
     );
   }
 }

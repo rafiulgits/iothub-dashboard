@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "../../shared-components/layout";
 import AgentHub from "../../services/AgentHub";
 import CommandLineView from "./CommandLineView";
-import { HubRpc } from "../../shared-components/const";
+import { HubRpc } from "../../navigation/rpc/Common";
 
 export default class CommandLineContainer extends React.Component {
   state = {

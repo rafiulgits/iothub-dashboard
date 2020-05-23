@@ -12,7 +12,6 @@ export default class ProtectedRoute extends React.Component {
   };
 
   render() {
-    console.log("hello");
     const { component: Component, ...props } = this.props;
     return <Route {...props} render={this.getView} />;
   }

@@ -65,33 +65,13 @@ const HomeView = (props) => {
   return (
     <Container fluid className="p-1">
       <Row className="d-flex justify-content-center m-0 p-0">
-        <Col md={3}>
-          <UserList
-            users={props.users}
-            clientCloseCallback={props.clientCloseCallback}
-          />
+        <Col sm={4}>
+          <Climate temperature={props.temperature} humidity={props.humidity} />
         </Col>
-        <Col md={3}>
-          <PublishBox messages={props.messages} />
+        <Col sm={4}>
+          <HomeLight />
         </Col>
-        <Col md={6}>
-          <Container fluid>
-            <Row className="d-flex justify-content-center">
-              <Col md={6}>
-                <Climate
-                  temperature={props.temperature}
-                  humidity={props.humidity}
-                />
-              </Col>
-              <Col md={6}>
-                <HomeLight />
-              </Col>
-              <Col md={12}>
-                <TemperatureChart />
-              </Col>
-            </Row>
-          </Container>
-        </Col>
+        <Col sm={4}></Col>
       </Row>
     </Container>
   );
