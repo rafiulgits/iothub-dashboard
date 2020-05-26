@@ -28,13 +28,11 @@ const data = {
   ],
 };
 
-const TemperatureChart = (props) => {
+export const TemperatureChart = (props) => {
   return (
-    <div className="mt-3 shadow p-2">
+    <div className="mt-3 shadow p-2 text-center">
       <h5>Temperature</h5>
       <Line data={data} />
     </div>
   );
 };
-
-export default TemperatureChart;

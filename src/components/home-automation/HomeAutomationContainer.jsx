@@ -1,31 +1,43 @@
 import React from "react";
-import UserApi from "../../apis/UserApi";
-import HomeAutomationView from "./HomeAutomationView";
-import { HubRpc } from "../../navigation/rpc/Common";
+import Topics from "./Topics";
+import { HubRpc, SysTopics } from "../../navigation/rpc/Common";
 import AgentHub from "../../services/AgentHub";
+import { Container, Row, Col } from "react-bootstrap";
+import { LightCard, TemperatureHumidityCard } from "./Cards";
+import { TemperatureChart } from "./Charts";
+import { ActivationStatus } from "../../models/Common";
 
-const MqttClientConnected = "$SYS/broker/clients/connected/new";
-const MqttClientDisconnected = "$SYS/broker/clients/disconnected/new";
-const HomeTempHumidity = "home/temp-humidity";
+var subscriptionDictionary = {};
 
 export default class HomeAutomationContainer extends React.Component {
   state = {
     isHubConnected: false,
     isMqttConnected: false,
     hubConnection: null,
-    connectedUsers: [],
-    messages: [],
     temperature: 0,
     humidity: 0,
+    livingRoomLightStatus: ActivationStatus.OFF,
   };
 
   componentDidMount() {
     let hubConnection = AgentHub.getConnection();
 
     this.setState({ hubConnection: hubConnection });
+    this.subscriptions();
     this.hubConnectionManager(hubConnection);
-    this.fetchConnectedUser();
   }
+
+  subscriptions = () => {
+    subscriptionDictionary[
+      Topics.HomeTemperatureAndHumidity
+    ] = this.handleHomeTemperatureAndHumidity;
+    subscriptionDictionary[
+      Topics.LivingRoomACStatus
+    ] = this.handleLivingRoomACStatus;
+    subscriptionDictionary[
+      Topics.LivingRoomLightStatus
+    ] = this.handleLivingRoomLightStatus;
+  };
 
   hubConnectionManager = (hubConnection) => {
     hubConnection
@@ -49,58 +61,40 @@ export default class HomeAutomationContainer extends React.Component {
   };
 
   manageBroadcast = (topic, payload) => {
-    console.log(topic);
-    if (topic === MqttClientConnected) {
+    if (topic === SysTopics.MqttClientConnected) {
       this.manageMqttClientConnected(payload);
-    } else if (topic === MqttClientDisconnected) {
-      this.manageMqttClientDisconnected(payload);
-    } else if (topic === HomeTempHumidity) {
-      this.manageTemperature(payload);
+    } else if (topic === SysTopics.MqttClientDisconnected) {
+      this.handleMqttClientDisconnected(payload);
     } else {
-      let messages = this.state.messages;
-      messages.push({ topic: topic, payload: payload });
-      this.setState({ messages: messages });
+      payload = JSON.parse(payload);
+      if (subscriptionDictionary[topic] === undefined) {
+        console.log(topic);
+      } else {
+        subscriptionDictionary[topic](topic, payload);
+      }
     }
   };
 
-  manageMqttClientConnected = (clientId) => {
-    UserApi.getById(clientId)
-      .then((res) => {
-        let users = this.state.connectedUsers;
-        users.push(res.data);
-        this.setState({ connectedUsers: users });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  manageMqttClientConnected = (clientId) => {};
 
-  manageTemperature = (payload) => {
-    var data = JSON.parse(payload);
+  handleHomeTemperatureAndHumidity = (topic, payload) => {
     this.setState({
-      temperature: data["temperature"],
-      humidity: data["humidity"],
+      temperature: payload["temperature"].toFixed(2),
+      humidity: payload["humidity"],
     });
   };
 
-  manageMqttClientDisconnected = (clientId) => {
-    let users = this.state.connectedUsers;
-    let index = users.findIndex((u) => u.id === clientId);
-    if (index > -1) {
-      users.splice(index, 1);
-      this.setState({ connectedUsers: users });
-    }
+  handleLivingRoomACStatus = (topic, payload) => {
+    // console.log(payload);
   };
 
-  fetchConnectedUser = () => {
-    UserApi.getConnectedUsers()
-      .then((res) => {
-        this.setState({ connectedUsers: res.data });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+  handleLivingRoomLightStatus = (topic, payload) => {
+    this.setState({
+      livingRoomLightStatus: payload["status"],
+    });
   };
+
+  handleMqttClientDisconnected = (clientId) => {};
 
   onClientClose = (clientId) => {
     this.state.hubConnection
@@ -117,13 +111,25 @@ export default class HomeAutomationContainer extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <HomeAutomationView
-          users={this.state.connectedUsers}
-          messages={this.state.messages}
-          clientCloseCallback={this.onClientClose}
-          temperature={this.state.temperature}
-          humidity={this.state.humidity}
-        />
+        <Container>
+          <Row className="d-flex justify-content-center m-0 p-0">
+            <Col sm={4}>
+              <LightCard status={this.state.livingRoomLightStatus} />
+            </Col>
+
+            <Col sm={4}>
+              <TemperatureHumidityCard
+                temperature={this.state.temperature}
+                humidity={this.state.humidity}
+              />
+            </Col>
+          </Row>
+          <Row className="d-flex justify-content-center m-0 p-0">
+            <Col sm={8}>
+              <TemperatureChart />
+            </Col>
+          </Row>
+        </Container>
       </React.Fragment>
     );
   }
