@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Thermometer from "react-thermometer-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
+import { faLightbulb, faFan } from "@fortawesome/free-solid-svg-icons";
 import { ActivationStatus } from "../../models/Common";
 import { Container, Row, Col, Form } from "react-bootstrap";
 
-export const LightCard = ({ status }) => {
+export const LightCard = ({ status, switchCallback }) => {
   const [lightStatus, setLightStatus] = useState(ActivationStatus.OFF);
   if (status !== lightStatus) {
     setLightStatus(status);
@@ -13,8 +13,10 @@ export const LightCard = ({ status }) => {
   const handleChange = (e) => {
     if (lightStatus === ActivationStatus.OFF) {
       setLightStatus(ActivationStatus.ON);
+      switchCallback({ status: ActivationStatus.ON });
     } else {
       setLightStatus(ActivationStatus.OFF);
+      switchCallback({ status: ActivationStatus.OFF });
     }
   };
   const bulbColor = lightStatus === ActivationStatus.ON ? "green" : "dark";
@@ -43,7 +45,68 @@ export const LightCard = ({ status }) => {
             <Form.Check
               checked={lightStatus === ActivationStatus.ON}
               type="switch"
-              id="custom-switch"
+              id="light-switch"
+              onChange={handleChange}
+              label=""
+            />
+          </Form>
+        </Col>
+      </Row>
+    </Container>
+  );
+};
+
+// ------------------------------------------------------------------------
+
+export const ACCard = ({ status, value, remoteCallback }) => {
+  const [acStatus, setAcStatus] = useState(ActivationStatus.OFF);
+  const [temperatureValue, setTemperatureValue] = useState(value);
+  if (status !== acStatus) {
+    setAcStatus(status);
+  }
+  if (value !== temperatureValue) {
+    setTemperatureValue(value);
+  }
+  const handleChange = (e) => {
+    if (acStatus === ActivationStatus.OFF) {
+      setAcStatus(ActivationStatus.ON);
+      remoteCallback({
+        status: ActivationStatus.ON,
+      });
+    } else {
+      setAcStatus(ActivationStatus.OFF);
+      remoteCallback({
+        status: ActivationStatus.OFF,
+      });
+    }
+  };
+  const bulbColor = acStatus === ActivationStatus.ON ? "green" : "dark";
+  return (
+    <Container fluid className="shadow p-2 m-1">
+      <Row>
+        <Col sm={4}>
+          <div
+            className="d-flex justify-content-center"
+            style={{
+              height: "100%",
+            }}
+          >
+            <FontAwesomeIcon
+              className="text-center mt-4"
+              color={bulbColor}
+              size="4x"
+              icon={faFan}
+            />
+          </div>
+        </Col>
+        <Col sm={8} className="text-center">
+          <h6 className=" mt-3">AC</h6>
+          <h6>{`${acStatus} : ${value}`}</h6>
+          <Form className="mt-2 mb-2">
+            <Form.Check
+              checked={acStatus === ActivationStatus.ON}
+              type="switch"
+              id="ac-switch"
               onChange={handleChange}
               label=""
             />

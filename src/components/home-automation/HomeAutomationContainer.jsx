@@ -1,10 +1,10 @@
 import React from "react";
 import Topics from "./Topics";
-import { HubRpc, SysTopics } from "../../navigation/rpc/Common";
+import { HubRpc } from "../../navigation/rpc/Common";
 import AgentHub from "../../services/AgentHub";
 import { Container, Row, Col } from "react-bootstrap";
-import { LightCard, TemperatureHumidityCard } from "./Cards";
-import { TemperatureChart } from "./Charts";
+import { LightCard, ACCard, TemperatureHumidityCard } from "./Cards";
+import { TemperatureChart, TemperatureLogs } from "./Charts";
 import { ActivationStatus } from "../../models/Common";
 
 var subscriptionDictionary = {};
@@ -17,6 +17,8 @@ export default class HomeAutomationContainer extends React.Component {
     temperature: 0,
     humidity: 0,
     livingRoomLightStatus: ActivationStatus.OFF,
+    livingRoomACStatus: ActivationStatus.OFF,
+    livingRoomACTemperatureValue: "N/A",
   };
 
   componentDidMount() {
@@ -61,31 +63,31 @@ export default class HomeAutomationContainer extends React.Component {
   };
 
   manageBroadcast = (topic, payload) => {
-    if (topic === SysTopics.MqttClientConnected) {
-      this.manageMqttClientConnected(payload);
-    } else if (topic === SysTopics.MqttClientDisconnected) {
-      this.handleMqttClientDisconnected(payload);
+    payload = JSON.parse(payload);
+    if (subscriptionDictionary[topic] === undefined) {
+      console.log(topic);
     } else {
-      payload = JSON.parse(payload);
-      if (subscriptionDictionary[topic] === undefined) {
-        console.log(topic);
-      } else {
-        subscriptionDictionary[topic](topic, payload);
-      }
+      subscriptionDictionary[topic](topic, payload);
     }
   };
 
-  manageMqttClientConnected = (clientId) => {};
-
   handleHomeTemperatureAndHumidity = (topic, payload) => {
+    let temperature = payload["temperature"].toFixed(2);
+    TemperatureLogs.push({
+      dateTime: new Date().toLocaleString(),
+      value: temperature,
+    });
     this.setState({
-      temperature: payload["temperature"].toFixed(2),
+      temperature: temperature,
       humidity: payload["humidity"],
     });
   };
 
   handleLivingRoomACStatus = (topic, payload) => {
-    // console.log(payload);
+    this.setState({
+      livingRoomACStatus: payload["status"],
+      livingRoomACTemperatureValue: payload["value"],
+    });
   };
 
   handleLivingRoomLightStatus = (topic, payload) => {
@@ -94,16 +96,30 @@ export default class HomeAutomationContainer extends React.Component {
     });
   };
 
-  handleMqttClientDisconnected = (clientId) => {};
-
-  onClientClose = (clientId) => {
+  handleLivingRoomLightSwitching = (data) => {
+    let requestPayload = JSON.stringify(data);
     this.state.hubConnection
       .invoke(
         HubRpc.InvokeMqttBroker,
-        "$SYS/request/broker/clients/disconnect/command",
-        clientId
+        Topics.RequestLivingRoomLightStatusChange,
+        requestPayload
       )
       .catch((err) => {
+        alert("failed to invoke the light request");
+        console.log(err);
+      });
+  };
+
+  handleLivingRoomACRemote = (data) => {
+    let requestPayload = JSON.stringify(data);
+    this.state.hubConnection
+      .invoke(
+        HubRpc.InvokeMqttBroker,
+        Topics.RequestLivingRoomACStatusChange,
+        requestPayload
+      )
+      .catch((err) => {
+        alert("failed to invoke the ac request");
         console.log(err);
       });
   };
@@ -114,7 +130,10 @@ export default class HomeAutomationContainer extends React.Component {
         <Container>
           <Row className="d-flex justify-content-center m-0 p-0">
             <Col sm={4}>
-              <LightCard status={this.state.livingRoomLightStatus} />
+              <LightCard
+                status={this.state.livingRoomLightStatus}
+                switchCallback={this.handleLivingRoomLightSwitching}
+              />
             </Col>
 
             <Col sm={4}>
@@ -123,8 +142,16 @@ export default class HomeAutomationContainer extends React.Component {
                 humidity={this.state.humidity}
               />
             </Col>
+
+            <Col sm={4}>
+              <ACCard
+                status={this.state.livingRoomACStatus}
+                value={this.state.livingRoomACTemperatureValue}
+                remoteCallback={this.handleLivingRoomACRemote}
+              />
+            </Col>
           </Row>
-          <Row className="d-flex justify-content-center m-0 p-0">
+          <Row className="d-flex justify-content-center p-0 mb-3 mt-3">
             <Col sm={8}>
               <TemperatureChart />
             </Col>
