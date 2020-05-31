@@ -19,9 +19,9 @@ export const LightCard = ({ status, switchCallback }) => {
       switchCallback({ status: ActivationStatus.OFF });
     }
   };
-  const bulbColor = lightStatus === ActivationStatus.ON ? "green" : "dark";
+  const bulbColor = lightStatus === ActivationStatus.ON ? "red" : "white";
   return (
-    <Container fluid className="shadow p-2 m-1">
+    <Container fluid className="shadow p-2 m-1 list-group-item-danger">
       <Row>
         <Col sm={4}>
           <div
@@ -67,7 +67,7 @@ export const ACCard = ({ status, value, remoteCallback }) => {
   if (value !== temperatureValue) {
     setTemperatureValue(value);
   }
-  const handleChange = (e) => {
+  const handleSwitch = (e) => {
     if (acStatus === ActivationStatus.OFF) {
       setAcStatus(ActivationStatus.ON);
       remoteCallback({
@@ -80,9 +80,19 @@ export const ACCard = ({ status, value, remoteCallback }) => {
       });
     }
   };
-  const bulbColor = acStatus === ActivationStatus.ON ? "green" : "dark";
+
+  const handleValueChange = (e) => {
+    let value = (Number.parseFloat(e.target.value) / 2).toFixed(0);
+    setTemperatureValue(value);
+    remoteCallback({
+      status: acStatus,
+      value: value,
+    });
+  };
+
+  const acColor = acStatus === ActivationStatus.ON ? "green" : "dark";
   return (
-    <Container fluid className="shadow p-2 m-1">
+    <Container fluid className="shadow p-2 m-1 list-group-item-primary">
       <Row>
         <Col sm={4}>
           <div
@@ -93,7 +103,7 @@ export const ACCard = ({ status, value, remoteCallback }) => {
           >
             <FontAwesomeIcon
               className="text-center mt-4"
-              color={bulbColor}
+              color={acColor}
               size="4x"
               icon={faFan}
             />
@@ -107,8 +117,14 @@ export const ACCard = ({ status, value, remoteCallback }) => {
               checked={acStatus === ActivationStatus.ON}
               type="switch"
               id="ac-switch"
-              onChange={handleChange}
+              onChange={handleSwitch}
               label=""
+            />
+            <Form.Control
+              onChange={handleValueChange}
+              type="range"
+              custom
+              defaultValue={temperatureValue}
             />
           </Form>
         </Col>
