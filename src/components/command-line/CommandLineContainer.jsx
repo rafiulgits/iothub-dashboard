@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../../shared-components/layout";
+import Layout from "../../shared-components/layout/Layout";
 import AgentHub from "../../services/AgentHub";
 import CommandLineView from "./CommandLineView";
 import { HubRpc } from "../../navigation/rpc/Common";

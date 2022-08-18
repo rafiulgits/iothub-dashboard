@@ -1,7 +1,7 @@
 import React from "react";
 import Layout from "../../shared-components/layout/Layout";
 import AgentHub from "../../services/AgentHub";
-import HomeAutomation from "../home-automation";
+import HomeAutomation from "../home-automation/HomeAutomationContainer";
 
 import { Tab, Row, Col, Nav } from "react-bootstrap";
 

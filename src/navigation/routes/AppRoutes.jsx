@@ -1,7 +1,7 @@
 import React from "react";
 import ProtectedRoute from "../../shared-components/protected-route/ProtectedRoute";
-import DashboardContainer from "../../components/dashboard";
-import CommandLineContainer from "../../components/command-line";
+import DashboardContainer from "../../components/dashboard/DashboardContainer";
+import CommandLineContainer from "../../components/command-line/CommandLineContainer";
 import { Switch } from "react-router-dom";
 
 const AppRoute = () => {

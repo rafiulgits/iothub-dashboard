@@ -38,6 +38,10 @@ export const TemperatureChart = (props) => {
     },
     yaxis: {
       max: 50,
+      min: 0,
+      tickAmount: 5,
+      forceNiceScale: true,
+      decimalsInFloat: 2,
     },
     legend: {
       show: false,

@@ -1,5 +1,5 @@
 import React from "react";
-import LoginContainer from "../../components/login";
+import LoginContainer from "../../components/login/LoginContainer";
 import { Switch, Route } from "react-router-dom";
 
 const AuthenticationRoute = () => {

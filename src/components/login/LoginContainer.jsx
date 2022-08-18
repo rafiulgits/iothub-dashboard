@@ -1,7 +1,7 @@
 import React from "react";
-import Layout from "../../shared-components/layout";
+import Layout from "../../shared-components/layout/Layout";
 import AuthApi from "../../apis/AuthApi";
-import Loader from "../../shared-components/loader";
+import Loader from "../../shared-components/loader/Loader";
 import UserManager from "../../services/UserManager";
 import { LoginForm, Error } from "./LoginView";
 import { Container, Row, Col } from "react-bootstrap";
