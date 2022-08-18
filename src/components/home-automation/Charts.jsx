@@ -10,7 +10,7 @@ export const TemperatureChart = (props) => {
   let options = {
     chart: {
       id: "realtime",
-      height: 400,
+      height: 300,
       type: "line",
       animations: {
         enabled: true,
@@ -38,8 +38,8 @@ export const TemperatureChart = (props) => {
     },
     yaxis: {
       max: 50,
-      min: 0,
-      tickAmount: 5,
+      min: 20,
+      tickAmount: 15,
       forceNiceScale: true,
       decimalsInFloat: 2,
     },

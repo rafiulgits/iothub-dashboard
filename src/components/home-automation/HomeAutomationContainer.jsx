@@ -30,15 +30,12 @@ export default class HomeAutomationContainer extends React.Component {
   }
 
   subscriptions = () => {
-    subscriptionDictionary[
-      Topics.HomeTemperatureAndHumidity
-    ] = this.handleHomeTemperatureAndHumidity;
-    subscriptionDictionary[
-      Topics.LivingRoomACStatus
-    ] = this.handleLivingRoomACStatus;
-    subscriptionDictionary[
-      Topics.LivingRoomLightStatus
-    ] = this.handleLivingRoomLightStatus;
+    subscriptionDictionary[Topics.HomeTemperatureAndHumidity] =
+      this.handleHomeTemperatureAndHumidity;
+    subscriptionDictionary[Topics.LivingRoomACStatus] =
+      this.handleLivingRoomACStatus;
+    subscriptionDictionary[Topics.LivingRoomLightStatus] =
+      this.handleLivingRoomLightStatus;
   };
 
   hubConnectionManager = (hubConnection) => {
@@ -151,7 +148,7 @@ export default class HomeAutomationContainer extends React.Component {
               />
             </Col>
           </Row>
-          <Row className="d-flex justify-content-center p-0 mb-3 mt-3">
+          <Row className="p-0 mb-3 mt-3">
             <Col sm={8}>
               <TemperatureChart />
             </Col>
